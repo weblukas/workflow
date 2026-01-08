@@ -60,7 +60,8 @@ export default function Sidebar({
                     active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'
                   }`}
                 >
-                  {/* simple icon placeholder */}
+                    {/* simple icon placeholder */}
+                 
                   <span
                     className={`h-5 w-5 rounded-sm flex items-center justify-center text-xs ${
                       active ? 'text-indigo-700' : 'text-gray-400'
@@ -102,7 +103,7 @@ export default function Sidebar({
       <div className='px-4 py-3 border-t border-gray-100'>
         <div className='flex items-center gap-3'>
           <Image
-            src='/avatar-placeholder.png'
+            src='/avatar.png'
             alt='User avatar'
             width={32}
             height={32}

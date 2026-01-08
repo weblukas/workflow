@@ -14,7 +14,7 @@ export default function Topbar({
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
     setQuery(e.target.value);
     const v = e.target.value;
-    // debouncing could be added later
+    // debouncing maybe
     onSearch?.(v);
   }
   return (
@@ -89,7 +89,7 @@ export default function Topbar({
                   aria-label='Open user menu'
                 >
                   <Image
-                    src='/avatar-placeholder.png'
+                    src='/avatar.png'
                     alt='avatar'
                     width={32}
                     height={32}
