@@ -13,6 +13,14 @@ type NavItem = {
   badge?: number;
 };
 
+type User = {
+  name?: string;
+  role?: string;
+  team?: string;
+  email?: string;
+  avatarUrl?: string;
+};
+
 const DEFAULT_NAV: NavItem[] = [
   { key: 'dashboard', title: 'Dashboard', href: '/' },
   { key: 'boards', title: 'Boards', href: '/boards' },
@@ -27,10 +35,12 @@ export default function Sidebar({
   navItems = DEFAULT_NAV,
   onQuickAdd,
   className = '',
+  user,
 }: {
   navItems?: NavItem[];
   onQuickAdd?: () => void;
   className?: string;
+  user?: User;
 }) {
   const pathname = usePathname() || '/';
 
@@ -60,8 +70,8 @@ export default function Sidebar({
                     active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700'
                   }`}
                 >
-                    {/* simple icon placeholder */}
-                 
+                  {/* simple icon placeholder */}
+
                   <span
                     className={`h-5 w-5 rounded-sm flex items-center justify-center text-xs ${
                       active ? 'text-indigo-700' : 'text-gray-400'
@@ -103,15 +113,19 @@ export default function Sidebar({
       <div className='px-4 py-3 border-t border-gray-100'>
         <div className='flex items-center gap-3'>
           <Image
-            src='/avatar.png'
+            src={user?.avatarUrl ?? '/avatar.png'}
             alt='User avatar'
             width={32}
             height={32}
             className='h-8 w-8 rounded-full bg-gray-200'
           />
           <div>
-            <div className='text-sm font-medium'>Marek Kowalski</div>
-            <div className='text-xs text-gray-500'>Product</div>
+            <div className='text-sm font-medium'>
+              {user?.name ?? 'Guest User'}
+            </div>
+            <div className='text-xs text-gray-500'>
+              {user?.team ?? user?.role ?? user?.email ?? ''}
+            </div>
           </div>
         </div>
       </div>

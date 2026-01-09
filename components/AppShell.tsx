@@ -1,17 +1,25 @@
-"use client";
+'use client';
 
-import React from "react";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
+import React from 'react';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  // later need to do admin feature to add new user
+  const mockUser = {
+    name: 'Marek Kowalski',
+    team: 'Product',
+    email: 'marek@example.com',
+    avatarUrl: '/avatar.png',
+  };
 
   return (
     <div className='min-h-screen flex bg-gray-50'>
       {/* Desktop sidebar */}
       <div className='hidden md:block'>
-        <Sidebar />
+        <Sidebar user={mockUser} />
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -26,6 +34,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         />
         <div className='fixed left-0 top-0 bottom-0 w-64 bg-white shadow'>
           <Sidebar
+            user={mockUser}
             onQuickAdd={() => {
               setMobileOpen(false);
             }}
