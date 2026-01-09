@@ -7,149 +7,153 @@ const priorityColors: Record<
   string,
   { bg: string; text: string; badge: string }
 > = {
-  low: { bg: 'bg-blue-50', text: 'text-blue-700', badge: 'bg-blue-100' },
+  low: {
+    bg: 'bg-green-50',
+    text: 'text-green-800',
+    badge: 'bg-green-100 text-green-800',
+  },
   medium: {
     bg: 'bg-yellow-50',
-    text: 'text-yellow-700',
-    badge: 'bg-yellow-100',
+    text: 'text-yellow-800',
+    badge: 'bg-yellow-100 text-yellow-800',
   },
-  high: { bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100' },
+  high: {
+    bg: 'bg-red-50',
+    text: 'text-red-800',
+    badge: 'bg-red-100 text-red-800',
+  },
 };
 
 const statusColors: Record<string, string> = {
-  todo: 'bg-gray-100 text-gray-700',
-  'in-progress': 'bg-indigo-100 text-indigo-700',
-  done: 'bg-green-100 text-green-700',
+  todo: 'bg-gray-100 text-gray-800',
+  'in-progress': 'bg-yellow-100 text-yellow-800',
+  done: 'bg-green-100 text-green-800',
 };
 
 export default function TasksPage() {
-  const tasks = useTaskStore((state) => state.tasks);
-  const [filterPriority, setFilterPriority] = React.useState<string>('all');
-  const [filterStatus, setFilterStatus] = React.useState<string>('all');
-
-  const filteredTasks = tasks.filter((task) => {
-    const priorityMatch =
-      filterPriority === 'all' || task.priority === filterPriority;
-    const statusMatch = filterStatus === 'all' || task.status === filterStatus;
-    return priorityMatch && statusMatch;
-  });
+  const tasks = useTaskStore((s) => s.tasks);
+  const updateTask = useTaskStore((s) => s.updateTask);
 
   return (
     <div>
-      <div className='mb-6 flex items-center justify-between'>
-        <div>
-          <h1 className='text-3xl font-bold text-gray-800'>Tasks</h1>
-          <p className='mt-1 text-gray-600'>
-            Manage and track your team tasks ({tasks.length} total)
-          </p>
-        </div>
+      <div className='mb-6'>
+        <h1 className='text-3xl font-bold text-gray-800'>Tasks</h1>
+        <p className='mt-1 text-gray-600'>
+          Manage and track your team tasks ({tasks.length} total)
+        </p>
       </div>
 
-      <div className='mb-6 flex gap-4'>
-        <div>
-          <label className='block text-sm font-medium text-gray-700'>
-            Filter by Priority
-          </label>
-          <select
-            value={filterPriority}
-            onChange={(e) => setFilterPriority(e.target.value)}
-            className='mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm'
-          >
-            <option value='all'>All Priorities</option>
-            <option value='low'>Low</option>
-            <option value='medium'>Medium</option>
-            <option value='high'>High</option>
-          </select>
-        </div>
-        <div>
-          <label className='block text-sm font-medium text-gray-700'>
-            Filter by Status
-          </label>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className='mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm'
-          >
-            <option value='all'>All Statuses</option>
-            <option value='todo'>To Do</option>
-            <option value='in-progress'>In Progress</option>
-            <option value='done'>Done</option>
-          </select>
-        </div>
-      </div>
-
-      <div className='space-y-3'>
-        {filteredTasks.length === 0 ? (
-          <div className='rounded-lg border border-gray-200 bg-white p-6'>
-            <div className='flex h-32 items-center justify-center'>
-              <div className='text-center'>
-                <p className='text-gray-500'>No tasks found</p>
-                <p className='mt-2 text-sm text-gray-400'>
-                  {tasks.length === 0
-                    ? 'Create your first task using the "New" button'
-                    : 'Try adjusting your filters'}
-                </p>
-              </div>
+      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        {tasks.length === 0 ? (
+          <div className='rounded-lg border border-gray-200 bg-white p-6 col-span-full'>
+            <div className='text-center'>
+              <p className='text-gray-500'>No tasks yet</p>
+              <p className='mt-2 text-sm text-gray-400'>
+                Create your first task using the New button
+              </p>
             </div>
           </div>
         ) : (
-          filteredTasks.map((task) => (
-            <div
-              key={task.id}
-              className={`rounded-lg border border-gray-200 p-4 ${
-                priorityColors[task.priority].bg
-              }`}
-            >
-              <div className='flex items-start justify-between'>
-                <div className='flex-1'>
-                  <div className='flex items-center gap-3'>
-                    <h3
-                      className={`text-lg font-semibold ${
-                        priorityColors[task.priority].text
-                      }`}
-                    >
-                      {task.title}
-                    </h3>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        priorityColors[task.priority].badge
-                      }`}
-                    >
-                      {task.priority}
-                    </span>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        statusColors[task.status]
-                      }`}
-                    >
-                      {task.status === 'in-progress'
-                        ? 'In Progress'
-                        : task.status === 'done'
-                        ? 'Done'
-                        : 'To Do'}
-                    </span>
-                  </div>
+          tasks.map((task) => {
+            const created = new Date(task.createdAt);
+            const timeString = created.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+            const dateString = created.toLocaleDateString();
+            const progress =
+              task.status === 'todo'
+                ? 0
+                : task.status === 'in-progress'
+                ? 50
+                : 100;
+
+            return (
+              <div
+                key={task.id}
+                className={`rounded-lg border border-gray-200 p-4 bg-white ${
+                  priorityColors[task.priority]?.bg ?? ''
+                }`}
+              >
+                <div className='mb-2'>
+                  <h3
+                    className={`text-xl font-bold ${
+                      priorityColors[task.priority]?.text ?? ''
+                    }`}
+                  >
+                    {task.title}
+                  </h3>
                   {task.description && (
-                    <p className='mt-2 text-sm text-gray-700'>
+                    <p className='text-sm text-gray-600 mt-1'>
                       {task.description}
                     </p>
                   )}
-                  <div className='mt-3 flex gap-4 text-xs text-gray-600'>
-                    {task.assignee && (
-                      <div>
-                        <span className='font-medium'>Assigned to:</span>{' '}
-                        {task.assignee}
+                </div>
+
+                <div className='flex items-center justify-between gap-4'>
+                  <div className='flex-1'>
+                    <div className='flex flex-col gap-2'>
+                      <div className='flex items-center gap-4'>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-xs text-gray-500'>Status:</span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              statusColors[task.status]
+                            }`}
+                          >
+                            {task.status === 'in-progress'
+                              ? 'In Progress'
+                              : task.status === 'done'
+                              ? 'Done'
+                              : 'To Do'}
+                          </span>
+                        </div>
+
+                        <div className='flex items-center gap-2'>
+                          <span className='text-xs text-gray-500'>
+                            Priority:
+                          </span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              priorityColors[task.priority]?.badge ?? ''
+                            }`}
+                          >
+                            {task.priority}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    <div>
-                      <span className='font-medium'>Created:</span>{' '}
-                      {new Date(task.createdAt).toLocaleDateString()}
+
+                      <div className='w-full max-w-sm'>
+                        <div className='h-2 w-full rounded-full bg-gray-100'>
+                          <div
+                            className='h-2 rounded-full bg-indigo-500'
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <select
+                      value={task.status}
+                      onChange={(e) =>
+                        updateTask(task.id, { status: e.target.value as 'todo' | 'in-progress' | 'done' })
+                      }
+                      className='rounded-md border border-gray-300 px-2 py-1 text-sm'
+                    >
+                      <option value='todo'>To Do</option>
+                      <option value='in-progress'>In Progress</option>
+                      <option value='done'>Done</option>
+                    </select>
+                    <div className='text-xs text-gray-400 mt-2'>
+                      {dateString} • {timeString}
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
