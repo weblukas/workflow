@@ -3,9 +3,31 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import TaskModal from './TaskModal';
+import { useTaskStore } from '@/store/taskStore';
+
+type TaskFormData = {
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+  assignee: string;
+};
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [taskModalOpen, setTaskModalOpen] = React.useState(false);
+  const { addTask } = useTaskStore();
+
+  const handleCreateTask = (newTask: TaskFormData) => {
+    addTask(newTask);
+    setTaskModalOpen(false);
+    console.log('Task created:', newTask);
+  };
+
+  const handleQuickAdd = () => {
+    setTaskModalOpen(true);
+    if (mobileOpen) setMobileOpen(false);
+  };
 
   // later need to do admin feature to add new user
   const mockUser = {
@@ -16,39 +38,49 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className='min-h-screen flex bg-gray-50'>
-      {/* Desktop sidebar */}
-      <div className='hidden md:block'>
-        <Sidebar user={mockUser} />
-      </div>
+    <>
+      <div className='min-h-screen flex bg-gray-50'>
+        {/* Desktop sidebar */}
+        <div className='hidden md:block'>
+          <Sidebar user={mockUser} onQuickAdd={handleQuickAdd} />
+        </div>
 
-      {/* Mobile sidebar overlay */}
-      <div
-        className={`fixed inset-0 z-40 md:hidden ${mobileOpen ? '' : 'hidden'}`}
-        role='dialog'
-        aria-modal='true'
-      >
+        {/* Mobile sidebar overlay */}
         <div
-          className='fixed inset-0 bg-black/30'
-          onClick={() => setMobileOpen(false)}
-        />
-        <div className='fixed left-0 top-0 bottom-0 w-64 bg-white shadow'>
-          <Sidebar
-            user={mockUser}
-            onQuickAdd={() => {
-              setMobileOpen(false);
-            }}
+          className={`fixed inset-0 z-40 md:hidden ${
+            mobileOpen ? '' : 'hidden'
+          }`}
+          role='dialog'
+          aria-modal='true'
+        >
+          <div
+            className='fixed inset-0 bg-black/30'
+            onClick={() => setMobileOpen(false)}
           />
+          <div className='fixed left-0 top-0 bottom-0 w-64 bg-white shadow'>
+            <Sidebar
+              user={mockUser}
+              onQuickAdd={() => {
+                handleQuickAdd();
+              }}
+            />
+          </div>
+        </div>
+
+        <div className='flex-1 flex flex-col'>
+          <Topbar
+            onToggleSidebar={() => setMobileOpen((s) => !s)}
+            onQuickAdd={handleQuickAdd}
+          />
+          <main className='flex-1 p-6'>{children}</main>
         </div>
       </div>
 
-      <div className='flex-1 flex flex-col'>
-        <Topbar
-          onToggleSidebar={() => setMobileOpen((s) => !s)}
-          onQuickAdd={() => {}}
-        />
-        <main className='flex-1 p-6'>{children}</main>
-      </div>
-    </div>
+      <TaskModal
+        isOpen={taskModalOpen}
+        onClose={() => setTaskModalOpen(false)}
+        onSubmit={handleCreateTask}
+      />
+    </>
   );
 }
