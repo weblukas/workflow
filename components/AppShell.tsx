@@ -6,13 +6,6 @@ import Topbar from './Topbar';
 import TaskModal from './TaskModal';
 import { useTaskStore } from '@/store/taskStore';
 
-type TaskFormData = {
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  assignee: string;
-};
-
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [taskModalOpen, setTaskModalOpen] = React.useState(false);

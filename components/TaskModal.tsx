@@ -2,13 +2,6 @@
 
 import React from 'react';
 
-type TaskFormData = {
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  assignee: string;
-};
-
 export default function TaskModal({
   isOpen,
   onClose,

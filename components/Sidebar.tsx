@@ -5,22 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-type NavItem = {
-  key: string;
-  title: string;
-  href: string;
-  icon?: React.ReactNode;
-  badge?: number;
-};
-
-type User = {
-  name?: string;
-  role?: string;
-  team?: string;
-  email?: string;
-  avatarUrl?: string;
-};
-
 const DEFAULT_NAV: NavItem[] = [
   { key: 'dashboard', title: 'Dashboard', href: '/' },
   { key: 'boards', title: 'Boards', href: '/boards' },
