@@ -8,14 +8,14 @@ const priorityColors: Record<
   { bg: string; text: string; badge: string }
 > = {
   low: {
-    bg: 'bg-green-50',
-    text: 'text-green-800',
-    badge: 'bg-green-100 text-green-800',
-  },
-  medium: {
     bg: 'bg-yellow-50',
     text: 'text-yellow-800',
     badge: 'bg-yellow-100 text-yellow-800',
+  },
+  medium: {
+    bg: 'bg-orange-50',
+    text: 'text-orange-800',
+    badge: 'bg-orange-100 text-orange-800',
   },
   high: {
     bg: 'bg-red-50',
@@ -139,23 +139,29 @@ export default function TasksPage() {
             return (
               <div
                 key={task.id}
-                className={`rounded-lg border border-gray-200 p-4 bg-white ${
-                  priorityColors[task.priority]?.bg ?? ''
+                className={`rounded-lg border border-gray-200 p-4 bg-white shadow-sm border-t-8 transition-shadow hover:shadow-md ${
+                  task.priority === 'low'
+                    ? 'border-t-yellow-400'
+                    : task.priority === 'medium'
+                    ? 'border-t-orange-400'
+                    : 'border-t-red-400'
                 }`}
               >
-                <div className='mb-2'>
-                  <h3
-                    className={`text-xl font-bold ${
-                      priorityColors[task.priority]?.text ?? ''
-                    }`}
-                  >
-                    {task.title}
-                  </h3>
-                  {task.description && (
-                    <p className='text-sm text-gray-600 mt-1'>
-                      {task.description}
-                    </p>
-                  )}
+                <div className='mb-2 flex items-start justify-between'>
+                  <div>
+                    <h3 className='text-xl font-bold text-black'>
+                      {task.title}
+                    </h3>
+                    {task.description && (
+                      <p className='text-sm text-gray-600 mt-1'>
+                        {task.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className='text-xs text-gray-400 ml-4 text-right'>
+                    {dateString} • {timeString}
+                  </div>
                 </div>
 
                 <div className='flex items-center justify-between gap-4'>
@@ -219,9 +225,6 @@ export default function TasksPage() {
                       <option value='in-progress'>In Progress</option>
                       <option value='done'>Done</option>
                     </select>
-                    <div className='text-xs text-gray-400 mt-2'>
-                      {dateString} • {timeString}
-                    </div>
                   </div>
                 </div>
               </div>
